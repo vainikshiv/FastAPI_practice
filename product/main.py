@@ -1,11 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.sql.functions import mode
 from sqlalchemy.orm import Session
 import models
 import schemas
 from database import engine, SessionLocal
+from typing import List
 
 app = FastAPI()
 
@@ -19,16 +20,18 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/products")
+@app.get("/products", response_model=List[schemas.DisplayProduct])
 def products(db: Session = Depends(get_db)):
     return db.query(models.Product).all()
 
-@app.get("/product/{id}")
+@app.get("/product/{id}", response_model=schemas.DisplayProduct)
 def get_product(id: int, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     return product
 
-@app.post("/products")
+@app.post("/products", status_code=status.HTTP_201_CREATED)
 def add(request: schemas.Product, db: Session = Depends(get_db)):
     add_product = models.Product(
         name=request.name,
