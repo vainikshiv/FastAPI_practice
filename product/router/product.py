@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
+
+from . import login
 from .. import models, schemas
 from ..database import get_db
 from typing import List
@@ -11,7 +13,7 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[schemas.DisplayProduct])
-def products(db: Session = Depends(get_db)):
+def products(db: Session = Depends(get_db), current_user: schemas.Seller = Depends(login.get_current_user)):
     return db.query(models.Product).all()
 
 @router.get("/{id}", response_model=schemas.DisplayProduct)

@@ -3,4 +3,6 @@ uvicorn
 pydantic
 sqlalchemy
 passlib
-bcrypt==4.3.0
+bcrypt==4.0.1
+python-jose
+python-multipart

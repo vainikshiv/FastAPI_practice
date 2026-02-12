@@ -4,6 +4,7 @@ from . import models
 from .database import engine
 from .router import product, seller, login
 
+
 app = FastAPI(
     title="Seller API",
     description="Details of products and seller",
