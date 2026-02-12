@@ -5,13 +5,13 @@ from .. import models, schemas
 from ..database import get_db
 from passlib.context import CryptContext
 
-router1 = APIRouter(
+router = APIRouter(
     tags=["Seller"]
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-@router1.post("/seller", response_model=schemas.DisplaySeller)
+@router.post("/seller", response_model=schemas.DisplaySeller)
 def create_seller(request: schemas.Seller, db: Session = Depends(get_db)):
     hashed_pwd = pwd_context.hash(request.password)
     get_seller = models.Seller(username=request.username, email=request.email, password=hashed_pwd)
